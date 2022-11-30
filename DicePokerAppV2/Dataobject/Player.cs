@@ -13,7 +13,7 @@ namespace DicePokerAppV2.Dataobject
         private int numberOfThrowsShown;
         private bool isFinished;
 
-        public string Name { get; init; }
+        public string Name { get; set; }
         public int Id { get; init; }
 
         public List<PokerColumn> PokerColumns { get; set; } = new();

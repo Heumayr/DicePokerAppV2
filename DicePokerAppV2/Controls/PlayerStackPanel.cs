@@ -44,12 +44,20 @@ namespace DicePokerAppV2.Controls
         private void AddPlayerLabelsAfter()
         {
             var playerLabel1 = new PlayerLabel(Owner, nameof(Owner.NumberOfThrowsShown), PokerWindow.SmallFontSize, false, 0, 0);
+
             StatisticPlayerLabels.Add(playerLabel1);
             Children.Add(playerLabel1);
         }
 
         private void AddPlayerLabelsBefore()
         {
+            var numOfCol = Owner.NumberOfPokerColumns;
+
+            if (numOfCol == 1 && Owner.Name.Length > 4)
+                Owner.Name = $"{Owner.Name.Substring(0, 4)}.";
+            else if (numOfCol == 2 && Owner.Name.Length > 12)
+                Owner.Name = $"{Owner.Name.Substring(0, 12)}.";
+
             Children.Add(new PlayerLabel(Owner, nameof(Owner.Name), PokerWindow.NormalFontSize, true, 0, 0));
             Children.Add(new PokerBorder(0));
         }
@@ -57,6 +65,7 @@ namespace DicePokerAppV2.Controls
         private void CreateColumns()
         {
             ColumnsPanel.Orientation = Orientation.Horizontal;
+            ColumnsPanel.HorizontalAlignment = HorizontalAlignment.Center;
             foreach (var column in Owner.PokerColumns)
             {
                 var tempColumnPanel = new StackPanel();

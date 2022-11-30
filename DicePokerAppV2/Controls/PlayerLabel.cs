@@ -21,6 +21,7 @@ namespace DicePokerAppV2.Controls
             MinHeight = minheight;
             HorizontalContentAlignment = HorizontalAlignment.Center;
             VerticalContentAlignment = VerticalAlignment.Center;
+            
 
             BorderBrush = System.Windows.Media.Brushes.Transparent;
             FontSize = fontSize;

@@ -41,12 +41,30 @@ namespace DicePokerAppV2
 
         public List<Player> Players { get; set; } = new();
 
+        private int maxPlayer = 30;
+        private int maxColums = 10;
+
         public string NumberOfPlayers
         {
             get => numberOfPlayers; 
             set
-            {      
-                numberOfPlayers = value;
+            {
+                if(value.Length > 3) 
+                { 
+                    value = value.Substring(0, 3);
+                }
+
+                if (int.TryParse(value, out int temp))
+                    if (temp > maxPlayer)
+                    {
+                        numberOfPlayers = maxPlayer.ToString();
+                        MessageBox.Show($"Maximal {maxPlayer} players allowed.");
+                    }
+                    else
+                        numberOfPlayers = value;
+                else
+                    numberOfPlayers = value;
+
                 OnPropertyChanged(nameof(NumberOfPlayers));
                 ConfirmPlayersAndCreateThem();
             }
@@ -56,7 +74,22 @@ namespace DicePokerAppV2
             get => numberOfColumns;
             set
             {
-                numberOfColumns = value;
+                if (value.Length > 3)
+                {
+                    value = value.Substring(0, 3);
+                }
+
+                if (int.TryParse(value, out int temp))
+                    if (temp > maxColums)
+                    {
+                        numberOfColumns = maxColums.ToString();
+                        MessageBox.Show($"Maximal {maxColums} columns allowed.");
+                    }
+                    else
+                        numberOfColumns = value;
+                else
+                    numberOfColumns = value;
+
                 OnPropertyChanged(nameof(NumberOfColumns));
             }
         }
@@ -114,6 +147,11 @@ namespace DicePokerAppV2
             {
                 controlPressed = true;
             }
+
+            if(e.Key == Key.Enter && e.IsDown)
+            {
+                StartButton_Click(sender, e);
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -140,8 +178,13 @@ namespace DicePokerAppV2
 
             InputPanel.HorizontalAlignment = HorizontalAlignment.Center;
             InputPanel.VerticalAlignment = VerticalAlignment.Center;
-            InputPanel.Children.Add(CreateInputField("Players #", inputTextBoxes, true, nameof(NumberOfPlayers)));
-            InputPanel.Children.Add(CreateInputField("Columns #", inputTextBoxes, true, nameof(NumberOfColumns)));
+
+            var playersInput = CreateInputField("Players #", inputTextBoxes, true, nameof(NumberOfPlayers));
+            InputPanel.Children.Add(playersInput);
+
+            var columnInput = CreateInputField("Columns #", inputTextBoxes, true, nameof(NumberOfColumns));
+            InputPanel.Children.Add(columnInput);
+
             InputPanel.CanVerticallyScroll = true;
             InputPanel.Margin = new Thickness(10);
 
@@ -273,7 +316,7 @@ namespace DicePokerAppV2
                                 Logger.ResetLog();
                                 resetLog = false;
                             }
-                            Players.Add(new Player(idCount++, string.IsNullOrWhiteSpace(tb.Text.Trim()) ? $"Player {idCount -1}" : tb.Text.Trim(), numColumns));
+                            Players.Add(new Player(idCount++, string.IsNullOrWhiteSpace(tb.Text.Trim()) ? (numColumns == 1 ? $"P{idCount - 1}" : $"Player {idCount - 1}") : tb.Text.Trim(), numColumns));
                         //}                          
                     }
                 }
@@ -300,7 +343,7 @@ namespace DicePokerAppV2
 
             for (int i = 0; i < tempNumberOfPlayers; i++)
             {
-                var tempGrid = CreateInputField($"Player {i + 1}:", playersTextBoxes, false, string.Empty);
+                var tempGrid = CreateInputField($"Player {i + 1}:", playersTextBoxes, false, $"player{i + 1}");
                 PlayersGrids.Add(tempGrid);
                 InputPanel.Children.Add(tempGrid);
             }   
@@ -335,6 +378,7 @@ namespace DicePokerAppV2
 
 
             var textBox = new TextBox();
+            textBox.Name = propertyName;
             textBox.MinHeight = 20;
             textBox.MinWidth = 100;
             textBox.BorderBrush = PokerWindow.MainFrontColor;
@@ -346,9 +390,10 @@ namespace DicePokerAppV2
             if (bindIt)
             {
                 textBox.DataContext = this;
-                textBox.SetBinding(TextBox.TextProperty, propertyName);
+                textBox.SetBinding(TextBox.TextProperty, propertyName);               
             }
 
+            textBox.TextChanged += TextBox_TextChanged;
 
             Grid.SetColumn(textBox, 1);
             Grid.SetRow(textBox, 0);
@@ -357,6 +402,41 @@ namespace DicePokerAppV2
             textBoxesList.Add(textBox);
 
             return inputGrid;
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+             if(sender is TextBox tb)
+            {
+                if(tb.Name == nameof(NumberOfPlayers))
+                {
+                    NumberOfPlayers = tb.Text;
+                    tb.CaretIndex = tb.Text.Length;
+                }
+                else if (tb.Name == nameof(NumberOfColumns))
+                {
+                    NumberOfColumns = tb.Text;
+                    tb.CaretIndex = tb.Text.Length;
+                }
+                else if (tb.Name.StartsWith("player"))
+                {
+                    if(int.TryParse(NumberOfColumns, out int temp))
+                    {
+                        if(15 < tb.Text.Length)
+                        {
+                            tb.Text = tb.Text.Substring(0, 15);
+                            MessageBox.Show("Maximal 15 characters allowed.");
+                            tb.CaretIndex = tb.Text.Length;
+                        }
+                    }
+                    else
+                    {
+                        tb.Text = string.Empty;
+
+                        MessageBox.Show("At first, please ente a valid number of colums.");
+                    }
+                }
+            }
         }
 
 
