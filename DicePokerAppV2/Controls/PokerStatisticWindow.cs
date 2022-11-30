@@ -66,25 +66,26 @@ namespace DicePokerAppV2.Controls
 
             Topmost = true;
 
-            WindowStartupLocation= WindowStartupLocation.CenterScreen;
-
             SizeChanged += OnWindowSizeChanged;
 
             Show();
+
+            ScaleWindow();
         }
 
+        private int countSizeChangeInit = 0;
         protected void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (e.NewSize.Height != 0 && e.NewSize.Width != 0)
+            countSizeChangeInit++;
+
+            if (e.NewSize.Width != e.PreviousSize.Width)
             {
-
-                //Height = e.NewSize.Height;
-                //Width = e.NewSize.Width;
-
-                ScaleWindow();
-
-                SizeChanged -= OnWindowSizeChanged;
+                Top = (SystemParameters.VirtualScreenHeight - ActualHeight) / 2; 
+                Left = (SystemParameters.VirtualScreenWidth - ActualWidth) / 2;
             }
+
+            if (countSizeChangeInit >= 2)
+                SizeChanged -= OnWindowSizeChanged;
         }
 
         private void SetUpStatisticGrid()

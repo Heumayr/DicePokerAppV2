@@ -122,16 +122,34 @@ namespace DicePokerAppV2
 
             MaxHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
 
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
-
             PreviewKeyDown += Window_KeyDown;
             PreviewMouseWheel += Window_MouseWheel;
             PreviewKeyUp += Window_KeyUp;
             ResizeMode = ResizeMode.NoResize;
 
+
+            SizeChanged += OnWindowSizeChanged;
+
             CurrentScale += 1;
             ScaleWindow();
         }
+
+
+        private int countSizeChangeInit = 0;
+        protected void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            countSizeChangeInit++;
+
+            if (e.NewSize.Width != e.PreviousSize.Width)
+            {
+                Top = (SystemParameters.VirtualScreenHeight - ActualHeight) / 2;
+                Left = (SystemParameters.VirtualScreenWidth - ActualWidth) / 2;
+            }
+
+            if (countSizeChangeInit >= 2)
+                SizeChanged -= OnWindowSizeChanged;
+        }
+
 
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
@@ -486,10 +504,6 @@ namespace DicePokerAppV2
                 MainGrid.LayoutTransform = scaler;
             }
 
-            DoubleAnimation animator = new DoubleAnimation()
-            {
-                Duration = new Duration(TimeSpan.FromMilliseconds(100)),
-            };
 
             if (CurrentScale < 1)
                 CurrentScale = 1;
@@ -497,12 +511,32 @@ namespace DicePokerAppV2
             if (CurrentScale > 3.5)
                 CurrentScale = 3.5;
 
-            animator.To = CurrentScale;
+            if (firstLoad)
+            {
+                //animator.Completed += OnAnimationCompleted;
+                //animator.Duration = new Duration(TimeSpan.FromMilliseconds(0));
 
-            scaler.BeginAnimation(ScaleTransform.ScaleXProperty, animator);
-            scaler.BeginAnimation(ScaleTransform.ScaleYProperty, animator);
+                scaler.ScaleY = CurrentScale;
+
+                scaler.ScaleX = CurrentScale;
+
+                firstLoad = false;
+            }
+            else
+            {
+                DoubleAnimation animator = new DoubleAnimation()
+                {
+                    Duration = new Duration(TimeSpan.FromMilliseconds(100)),
+                };
+
+                animator.To = CurrentScale;
+
+                scaler.BeginAnimation(ScaleTransform.ScaleXProperty, animator);
+                scaler.BeginAnimation(ScaleTransform.ScaleYProperty, animator);
+            }
         }
 
+        private bool firstLoad = true;
 
         public ICommand EnableStartButton { get; set; } = new CommandDelegate(CanExecuteEnableStartButton, ExecuteWithStartButtonClick);
 

@@ -55,7 +55,7 @@ namespace DicePokerAppV2.Controls
             ColumnsPerPlayer = numberOfColumns;
             numberOfAllColums = numberOfColumns * players.Count();
             Players = players.ToList();
-            
+
             foreach (var player in players)
             {
                 player.SetUpOpponents(players);
@@ -107,33 +107,36 @@ namespace DicePokerAppV2.Controls
 
             SetUpStatsState();
 
-            SizeChanged += OnWindowSizeChanged; 
+            SizeChanged += OnWindowSizeChanged;
 
             Show();
+
+            ScaleWindow();
         }
+
+        private int countSizeChangeInit = 0;
 
         protected void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (e.NewSize.Height != 0)
+            countSizeChangeInit++;
+
+            if (e.NewSize.Width != e.PreviousSize.Width)
             {
-                MaximumScale = SystemParameters.PrimaryScreenHeight / e.NewSize.Height;
-
-                CurrentScale = MaximumScale;
-
-                ScaleWindow();
-
-                SizeChanged -= OnWindowSizeChanged;
+                Top = 0;
+                Left = (SystemParameters.VirtualScreenWidth - ActualWidth) / 2;
             }
+
+            if (countSizeChangeInit >= 2)
+                SizeChanged -= OnWindowSizeChanged;
         }
 
         private void ChangeToFinishMode(object? sender, bool e)
         {
             if (e)
             {
-                if(StatisticWindow == null)
+                if (StatisticWindow == null)
                 {
                     StatisticWindow = new(this, Players);
-                    
                 }
 
                 StatisticWindow.ButtonCallBackToGame = false;
@@ -169,7 +172,7 @@ namespace DicePokerAppV2.Controls
         private int showMinstatsMax = 8;
         private void ButtonHideStatistics_Click(object sender, RoutedEventArgs e)
         {
-            if(sender is PokerWindowButton button)
+            if (sender is PokerWindowButton button)
             {
                 SetUpStatsState();
 
@@ -179,7 +182,7 @@ namespace DicePokerAppV2.Controls
                     button.Content = Translation.HideStats;
                 else
                     button.Content = Translation.ShowStats;
-                
+
             }
         }
 
@@ -311,13 +314,13 @@ namespace DicePokerAppV2.Controls
                     }
                     PokerValueTextboxes.Add(tb);
                 }
-                else if(uie is StackPanel panel)
+                else if (uie is StackPanel panel)
                 {
                     SetTabIndex(panel.Children);
                 }
-                else if(uie is Border border)
+                else if (uie is Border border)
                 {
-                    if(border.Child is StackPanel panel1)
+                    if (border.Child is StackPanel panel1)
                         SetTabIndex(panel1.Children);
                 }
             }
@@ -367,11 +370,11 @@ namespace DicePokerAppV2.Controls
 
         private void PokerValueKeyDown_Pressed(object sender, KeyEventArgs e)
         {
-            if(sender is PokerValueTextbox pvtb)
+            if (sender is PokerValueTextbox pvtb)
             {
                 //e.Handled = true;
                 var tabIndex = pvtb.TabIndex;
-                
+
                 if (e.Key == Key.Enter)
                 {
                     tabIndex += numberOfAllColums;
@@ -387,7 +390,7 @@ namespace DicePokerAppV2.Controls
                     tabIndex -= numberOfAllColums;
 
                     if (tabIndex < 1)
-                        tabIndex += PokerColumn.NumberOfValues * numberOfAllColums;  
+                        tabIndex += PokerColumn.NumberOfValues * numberOfAllColums;
                 }
                 else if (e.Key == Key.Down)
                 {
@@ -415,16 +418,16 @@ namespace DicePokerAppV2.Controls
 
                 if (nextTexbox != null)
                     nextTexbox.Focus();
-            }          
+            }
         }
 
         private void CloseActions(object? sender, CancelEventArgs eventArgs)
         {
-            if(StatisticWindow != null && !StatisticWindow.IsClosed)
+            if (StatisticWindow != null && !StatisticWindow.IsClosed)
             {
                 StatisticWindow.Close();
             }
-                
+
             MainWindow.Show();
         }
 
@@ -449,6 +452,13 @@ namespace DicePokerAppV2.Controls
 
         private void ScaleWindow()
         {
+            if (firstLoad)
+            {
+                MaximumScale = SystemParameters.VirtualScreenHeight / ActualHeight;
+
+                CurrentScale = MaximumScale;
+            }
+
             var scaler = MainPanel.LayoutTransform as ScaleTransform;
 
             if (scaler == null)
@@ -463,16 +473,14 @@ namespace DicePokerAppV2.Controls
             if (CurrentScale > MaximumScale)
                 CurrentScale = MaximumScale;
 
-            if(firstLoad)
+            if (firstLoad)
             {
                 //animator.Completed += OnAnimationCompleted;
                 //animator.Duration = new Duration(TimeSpan.FromMilliseconds(0));
 
-                scaler.ScaleX = CurrentScale;
                 scaler.ScaleY = CurrentScale;
 
-                Top = 0;
-                Left = (SystemParameters.VirtualScreenWidth - Width) / 2;
+                scaler.ScaleX = CurrentScale;
 
                 firstLoad = false;
             }
@@ -556,17 +564,17 @@ namespace DicePokerAppV2.Controls
         public void SetUpStatisticLables(StackPanel panel)
         {
             panel.Children.Add(new PokerBorder(0));
-            
+
             StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.Dtm));
             StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.Place));
 
             StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.PossibleOpen));
             StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.RealisticOpen));
 
-            StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.Possible));            
+            StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.Possible));
             StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.Realistic));
-            
-       
+
+
             StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.MaxOpponent));
             StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.MinOpponent));
 
@@ -577,7 +585,7 @@ namespace DicePokerAppV2.Controls
         }
 
         public PokerValueLabel GeneratePokerValueLabelStatisitics(string labelname)
-        {          
+        {
             return new PokerValueLabel(SmallFontSize, false, 0, 0)
             {
                 Content = labelname,
