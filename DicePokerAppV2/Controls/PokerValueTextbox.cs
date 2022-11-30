@@ -89,6 +89,8 @@ namespace DicePokerAppV2.Controls
             //MouseWheelValue = BindingValue.ValidValues[(int)actualIndex];
             Text = BindingValue.ValidValues[(int)actualIndex];
             mouseChangedValue = true;
+
+            e.Handled = true;
         }
 
         public void ShowFailure(object? sender, string msg)

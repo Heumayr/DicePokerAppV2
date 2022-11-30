@@ -87,11 +87,17 @@ namespace DicePokerAppV2
             MinHeight = 150;
             MinWidth = 250;
 
+            MaxHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             PreviewKeyDown += Window_KeyDown;
             PreviewMouseWheel += Window_MouseWheel;
             PreviewKeyUp += Window_KeyUp;
             ResizeMode = ResizeMode.NoResize;
+
+            CurrentScale += 1;
+            ScaleWindow();
         }
 
         private void Window_KeyUp(object sender, KeyEventArgs e)
@@ -260,15 +266,15 @@ namespace DicePokerAppV2
                 {
                     if(control is TextBox tb)
                     {
-                        if (tb.Text != string.Empty)
-                        {
+                        //if (tb.Text != string.Empty)
+                        //{
                             if (resetLog)
                             {
                                 Logger.ResetLog();
                                 resetLog = false;
                             }
-                            Players.Add(new Player(idCount++, tb.Text.Trim(), numColumns));
-                        }                          
+                            Players.Add(new Player(idCount++, string.IsNullOrWhiteSpace(tb.Text.Trim()) ? $"Player {idCount -1}" : tb.Text.Trim(), numColumns));
+                        //}                          
                     }
                 }
             }
@@ -358,19 +364,6 @@ namespace DicePokerAppV2
         {
             if (controlPressed)
             {
-                var scaler = MainGrid.LayoutTransform as ScaleTransform;
-
-                if (scaler == null)
-                {
-                    scaler = new ScaleTransform(1.0, 1.0);
-                    MainGrid.LayoutTransform = scaler;
-                }
-
-                DoubleAnimation animator = new DoubleAnimation()
-                {
-                    Duration = new Duration(TimeSpan.FromMilliseconds(100)),
-                };
-
                 if (e.Delta < 0)
                 {
                     CurrentScale += 0.1;
@@ -380,14 +373,35 @@ namespace DicePokerAppV2
                     CurrentScale -= 0.1;
                 }
 
-                if(CurrentScale < 1)
-                    CurrentScale = 1;
-
-                animator.To = CurrentScale;
-
-                scaler.BeginAnimation(ScaleTransform.ScaleXProperty, animator);
-                scaler.BeginAnimation(ScaleTransform.ScaleYProperty, animator);
+                ScaleWindow();
             }
+        }
+
+        private void ScaleWindow()
+        {
+            var scaler = MainGrid.LayoutTransform as ScaleTransform;
+
+            if (scaler == null)
+            {
+                scaler = new ScaleTransform(1.0, 1.0);
+                MainGrid.LayoutTransform = scaler;
+            }
+
+            DoubleAnimation animator = new DoubleAnimation()
+            {
+                Duration = new Duration(TimeSpan.FromMilliseconds(100)),
+            };
+
+            if (CurrentScale < 1)
+                CurrentScale = 1;
+
+            if (CurrentScale > 3.5)
+                CurrentScale = 3.5;
+
+            animator.To = CurrentScale;
+
+            scaler.BeginAnimation(ScaleTransform.ScaleXProperty, animator);
+            scaler.BeginAnimation(ScaleTransform.ScaleYProperty, animator);
         }
 
 
@@ -410,13 +424,15 @@ namespace DicePokerAppV2
                     //var playersCount = Convert.ToInt32(list[0].Text);
                     var columnsCount = Convert.ToInt32(list[1].Text);
 
-                    var countValidePlayerNames = 0;
+                    //var countValidePlayerNames = 0;
 
-                    for (int i = 2; i < list.Count; i++)
-                    {
-                        if (!string.IsNullOrWhiteSpace(list[i].Text))
-                            countValidePlayerNames++;
-                    }
+                    //for (int i = 2; i < list.Count; i++)
+                    //{
+                    //    if (!string.IsNullOrWhiteSpace(list[i].Text))
+                    //        countValidePlayerNames++;
+                    //}
+
+                    var countValidePlayerNames = list.Count;
 
                     if (countValidePlayerNames > 0 && columnsCount > 0)
                         return true;

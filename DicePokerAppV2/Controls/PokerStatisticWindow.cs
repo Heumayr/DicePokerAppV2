@@ -18,7 +18,7 @@ namespace DicePokerAppV2.Controls
 
         public PokerWindow CallingPokerWindow { get; }
         public List<Player> Players { get; }
-        public double CurrentScale { get; private set; }
+        public double CurrentScale { get; private set; } = 3;
 
         public StackPanel ButtonPanel { get; init; } = new();
         public StackPanel StatisticPanel { get; init; } = new();
@@ -34,7 +34,8 @@ namespace DicePokerAppV2.Controls
             Players = players;
             Title = "Congratulations!";
             IsClosed = false;
-           
+
+            MaxHeight = System.Windows.SystemParameters.VirtualScreenHeight;
 
             pokerWindow.IsEnabled = false;
 
@@ -53,8 +54,8 @@ namespace DicePokerAppV2.Controls
 
             Content = MainPanel;
 
-            MinHeight = 100;
-            MinWidth = 200;
+            //MinHeight = 100;
+            //MinWidth = 200;
             SizeToContent = SizeToContent.WidthAndHeight;
             ResizeMode = ResizeMode.NoResize;
 
@@ -65,10 +66,25 @@ namespace DicePokerAppV2.Controls
 
             Topmost = true;
 
-            CurrentScale += 3;
-            ScaleWindow();
+            WindowStartupLocation= WindowStartupLocation.CenterScreen;
+
+            SizeChanged += OnWindowSizeChanged;
 
             Show();
+        }
+
+        protected void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Height != 0 && e.NewSize.Width != 0)
+            {
+
+                //Height = e.NewSize.Height;
+                //Width = e.NewSize.Width;
+
+                ScaleWindow();
+
+                SizeChanged -= OnWindowSizeChanged;
+            }
         }
 
         private void SetUpStatisticGrid()
@@ -213,17 +229,20 @@ namespace DicePokerAppV2.Controls
             if (ButtonCallBackToGame)
                 return;
 
-            var result = MessageBox.Show("Are you sure to leave?", "Cancelation", MessageBoxButton.OKCancel);
+            //var result = MessageBox.Show("Are you sure to leave?", "Cancelation", MessageBoxButton.OKCancel);
 
-            if (result == MessageBoxResult.OK)
-            {
-                IsClosed = true;
-                CallingPokerWindow.Close();
-            }
-            else
-            {
-                e.Cancel = true;
-            }
+            //if (result == MessageBoxResult.OK)
+            //{
+            //    IsClosed = true;
+            //    CallingPokerWindow.Close();
+            //}
+            //else
+            //{
+            //    e.Cancel = true;
+            //}
+
+            IsClosed = true;
+            CallingPokerWindow.Close();
         }
 
         
@@ -251,7 +270,7 @@ namespace DicePokerAppV2.Controls
                 else
                 {
                     CurrentScale -= 0.1;
-                }
+                }       
 
                 ScaleWindow();
             }
@@ -266,20 +285,43 @@ namespace DicePokerAppV2.Controls
                 scaler = new ScaleTransform(1.0, 1.0);
                 MainPanel.LayoutTransform = scaler;
             }
-
-            DoubleAnimation animator = new DoubleAnimation()
-            {
-                Duration = new Duration(TimeSpan.FromMilliseconds(100)),
-            };
+     
 
             if (CurrentScale < 1)
                 CurrentScale = 1;
 
-            animator.To = CurrentScale;
+            if (CurrentScale > 3.5)
+                CurrentScale = 3.5;
 
-            scaler.BeginAnimation(ScaleTransform.ScaleXProperty, animator);
-            scaler.BeginAnimation(ScaleTransform.ScaleYProperty, animator);
+
+            if (firstLoad)
+            {
+                //animator.Completed += OnAnimationCompleted;
+                //animator.Duration = new Duration(TimeSpan.FromMilliseconds(0));
+
+                scaler.ScaleX = CurrentScale;
+                scaler.ScaleY = CurrentScale;
+
+                //Top = (SystemParameters.VirtualScreenHeight - Height) / 2;
+                //Left = (SystemParameters.VirtualScreenWidth - Width) / 2;
+
+                firstLoad = false;
+            }
+            else
+            {
+                DoubleAnimation animator = new DoubleAnimation()
+                {
+                    Duration = new Duration(TimeSpan.FromMilliseconds(100)),
+                };
+
+                animator.To = CurrentScale;
+
+                scaler.BeginAnimation(ScaleTransform.ScaleXProperty, animator);
+                scaler.BeginAnimation(ScaleTransform.ScaleYProperty, animator);
+            }
         }
+
+        private bool firstLoad = true;
 
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {

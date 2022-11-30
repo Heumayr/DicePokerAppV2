@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
@@ -31,6 +32,7 @@ namespace DicePokerAppV2.Controls
         public PokerStatisticWindow? StatisticWindow { get; set; } = null;
 
         private double CurrentScale { get; set; } = 1;
+        private double MaximumScale { get; set; } = 5;
 
         private List<PokerValueTextbox> PokerValueTextboxes { get; set; } = new();
 
@@ -47,6 +49,8 @@ namespace DicePokerAppV2.Controls
             MainWindow = mainWindow;
             MainWindow.Hide();
             Title = MainWindow.Title;
+
+            MaxHeight = System.Windows.SystemParameters.VirtualScreenHeight;
 
             ColumnsPerPlayer = numberOfColumns;
             numberOfAllColums = numberOfColumns * players.Count();
@@ -101,7 +105,25 @@ namespace DicePokerAppV2.Controls
                 p.GameFinished += ChangeToFinishMode;
             }
 
+            SetUpStatsState();
+
+            SizeChanged += OnWindowSizeChanged; 
+
             Show();
+        }
+
+        protected void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Height != 0)
+            {
+                MaximumScale = SystemParameters.PrimaryScreenHeight / e.NewSize.Height;
+
+                CurrentScale = MaximumScale;
+
+                ScaleWindow();
+
+                SizeChanged -= OnWindowSizeChanged;
+            }
         }
 
         private void ChangeToFinishMode(object? sender, bool e)
@@ -128,7 +150,7 @@ namespace DicePokerAppV2.Controls
             buttonSave.Click += ButtonSave_Click;
             panel.Children.Add(buttonSave.SurroundingBorder);
 
-            var buttonHideStatistics = new PokerWindowButton("show min stats");
+            var buttonHideStatistics = new PokerWindowButton("hide stats");
             buttonHideStatistics.Click += ButtonHideStatistics_Click;
             panel.Children.Add(buttonHideStatistics.SurroundingBorder);
 
@@ -149,72 +171,78 @@ namespace DicePokerAppV2.Controls
         {
             if(sender is PokerWindowButton button)
             {
-                if (countClicksVis == 0)
-                {
-                    saveStatVis = Visibility.Visible;
-                    saveMinStatsVis = Visibility.Visible;
-                }
-                else if(countClicksVis == 1)
-                {
-                    saveStatVis = Visibility.Collapsed;
-                    saveMinStatsVis = Visibility.Visible;
-                }
-                else
-                {
-                    saveStatVis = Visibility.Collapsed;
-                    saveMinStatsVis = Visibility.Collapsed;
-                }
+                SetUpStatsState();
 
-                var i = 0;
-
-                foreach (var stat in StatisticLabels)
-                {
-                    if (i < showMinstats || i > showMinstatsMax)
-                    {
-                        stat.Visibility = saveMinStatsVis;
-                    }
-                    else
-                    {
-                        stat.Visibility = saveStatVis;
-                    }
-                    i++;
-                }    
-
-                foreach (var psp in PlayerStackPanels)
-                {
-                    i = 0;
-                    foreach (var pspstatl in psp.StatisticLabels)
-                    {
-                        if (i < showMinstats)
-                        {
-                            pspstatl.Visibility = saveMinStatsVis;
-                        }
-                        else
-                        {
-                            pspstatl.Visibility = saveStatVis;
-                        }
-                        i++;
-                        if (i > showMinstatsMax)
-                            i = 0;
-                    }
-
-                    foreach (var pspstatpl in psp.StatisticPlayerLabels)
-                    {
-                        pspstatpl.Visibility = saveMinStatsVis;
-                    }
-                }
-
-                if (countClicksVis == 0)
+                if (countClicksVis == 1)
                     button.Content = "show min stats";
-                else if (countClicksVis == 1)
+                else if (countClicksVis == 2)
                     button.Content = "hide stats";
                 else
                     button.Content = "unhide stats";
                 
-                countClicksVis++;
-                if (countClicksVis > 2)
-                    countClicksVis = 0;
             }
+        }
+
+        private void SetUpStatsState()
+        {
+            if (countClicksVis == 0)
+            {
+                saveStatVis = Visibility.Visible;
+                saveMinStatsVis = Visibility.Visible;
+            }
+            else if (countClicksVis == 1)
+            {
+                saveStatVis = Visibility.Collapsed;
+                saveMinStatsVis = Visibility.Visible;
+            }
+            else
+            {
+                saveStatVis = Visibility.Collapsed;
+                saveMinStatsVis = Visibility.Collapsed;
+            }
+
+            var i = 0;
+
+            foreach (var stat in StatisticLabels)
+            {
+                if (i < showMinstats || i > showMinstatsMax)
+                {
+                    stat.Visibility = saveMinStatsVis;
+                }
+                else
+                {
+                    stat.Visibility = saveStatVis;
+                }
+                i++;
+            }
+
+            foreach (var psp in PlayerStackPanels)
+            {
+                i = 0;
+                foreach (var pspstatl in psp.StatisticLabels)
+                {
+                    if (i < showMinstats)
+                    {
+                        pspstatl.Visibility = saveMinStatsVis;
+                    }
+                    else
+                    {
+                        pspstatl.Visibility = saveStatVis;
+                    }
+                    i++;
+                    if (i > showMinstatsMax)
+                        i = 0;
+                }
+
+                foreach (var pspstatpl in psp.StatisticPlayerLabels)
+                {
+                    pspstatpl.Visibility = saveMinStatsVis;
+                }
+            }
+
+            countClicksVis++;
+            if (countClicksVis > 2)
+                countClicksVis = 0;
         }
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
@@ -405,18 +433,6 @@ namespace DicePokerAppV2.Controls
             if (controlPressed)
             {
                 e.Handled = true;
-                var scaler = MainPanel.LayoutTransform as ScaleTransform;
-
-                if (scaler == null)
-                {
-                    scaler = new ScaleTransform(1.0, 1.0);
-                    MainPanel.LayoutTransform = scaler;
-                }
-
-                DoubleAnimation animator = new DoubleAnimation()
-                {
-                    Duration = new Duration(TimeSpan.FromMilliseconds(100)),
-                };
 
                 if (e.Delta < 0)
                 {
@@ -427,8 +443,45 @@ namespace DicePokerAppV2.Controls
                     CurrentScale -= 0.1;
                 }
 
-                if (CurrentScale < 0.5)
-                    CurrentScale = 0.5;
+                ScaleWindow();
+            }
+        }
+
+        private void ScaleWindow()
+        {
+            var scaler = MainPanel.LayoutTransform as ScaleTransform;
+
+            if (scaler == null)
+            {
+                scaler = new ScaleTransform(1.0, 1.0);
+                MainPanel.LayoutTransform = scaler;
+            }
+
+            if (CurrentScale < 0.5)
+                CurrentScale = 0.5;
+
+            if (CurrentScale > MaximumScale)
+                CurrentScale = MaximumScale;
+
+            if(firstLoad)
+            {
+                //animator.Completed += OnAnimationCompleted;
+                //animator.Duration = new Duration(TimeSpan.FromMilliseconds(0));
+
+                scaler.ScaleX = CurrentScale;
+                scaler.ScaleY = CurrentScale;
+
+                Top = 0;
+                Left = (SystemParameters.VirtualScreenWidth - Width) / 2;
+
+                firstLoad = false;
+            }
+            else
+            {
+                DoubleAnimation animator = new DoubleAnimation()
+                {
+                    Duration = new Duration(TimeSpan.FromMilliseconds(100)),
+                };
 
                 animator.To = CurrentScale;
 
@@ -436,6 +489,18 @@ namespace DicePokerAppV2.Controls
                 scaler.BeginAnimation(ScaleTransform.ScaleYProperty, animator);
             }
         }
+
+        private bool firstLoad = true;
+
+        //private void OnAnimationCompleted(object? sender, EventArgs e)
+        //{
+        //    if(firstLoad) 
+        //    {
+        //        Top = 0;
+        //        Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
+        //        firstLoad = false;
+        //    }        
+        //}
 
         private void CreateLabels(Player? player)
         {
