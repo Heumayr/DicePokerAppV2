@@ -13,7 +13,10 @@ namespace DicePokerAppV2.Dataobject
         private int numberOfThrowsShown;
         private bool isFinished;
 
-        public string Name { get; set; }
+        public string Name { get; init; }
+
+        public string DisplayName { get; set; }
+
         public int Id { get; init; }
 
         public List<PokerColumn> PokerColumns { get; set; } = new();
@@ -22,7 +25,7 @@ namespace DicePokerAppV2.Dataobject
 
         public bool IsDone => PokerColumns.All(c => c.IsDone);
 
-        public event EventHandler<bool> GameFinished;
+        public event EventHandler<bool>? GameFinished;
 
         protected void OnIsDoneChanged()
         {
@@ -109,6 +112,7 @@ namespace DicePokerAppV2.Dataobject
         public Player(int id, string name, int numberOfPokerColumns)
         {
             Name = name;
+            DisplayName = name;
             NumberOfPokerColumns = numberOfPokerColumns;
             Id = id;
 

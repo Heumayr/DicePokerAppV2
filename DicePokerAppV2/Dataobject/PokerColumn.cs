@@ -187,11 +187,11 @@ namespace DicePokerAppV2.Dataobject
                 case PlacementEnumeration.First:
                     return "1.";
                 case PlacementEnumeration.FirstShared:
-                    return "1. s.";
+                    return $"1. {Translation.Shared}";
                 case PlacementEnumeration.Middle:
                     return "m";
                 case PlacementEnumeration.LastShared:
-                    return $"{OpponentsColumns.Count + 1}. s.";
+                    return $"{OpponentsColumns.Count + 1}. {Translation.Shared}";
                 case PlacementEnumeration.Last:
                     return $"{OpponentsColumns.Count + 1}.";
                 default:
@@ -204,17 +204,17 @@ namespace DicePokerAppV2.Dataobject
             Player = player;
             ColumnNumber = columnNumber;
 
-            Nine = new(this, "Nine", "9", 1);
-            Ten = new(this, "Ten", "10", 2);
-            Boy = new(this, "Boy", "B", 3);
-            Lady = new(this, "Lady", "L", 4);
-            King = new(this, "King", "K", 5);
-            Ace = new(this, "Ace", "A", 6);
+            Nine = new(this, Translation.Nine, Translation.NineShort, "Nine", 1);
+            Ten = new(this, Translation.Ten, Translation.TenShort, "Ten", 2);
+            Boy = new(this, Translation.Boy, Translation.BoyShort, "Boy", 3);
+            Lady = new(this, Translation.Lady, Translation.LadyShort, "Lady", 4);
+            King = new(this, Translation.King, Translation.KingShort, "King", 5);
+            Ace = new(this, Translation.Ace, Translation.AceShort, "Ace", 6);
 
-            Street = new(this, "Street", "Str", 20, 25, "5");
-            Full = new(this, "Full House", "F", 30, 35, "5");
-            Poker = new(this, "Poker", "P", 40, 45, "5");
-            Grande = new(this, "Grande", "G", 50, 80, "30");
+            Street = new(this, Translation.Street, Translation.StreetShort, "Street", 20, 25, "5");
+            Full = new(this, Translation.Full, Translation.FullShort, "Full House", 30, 35, "5");
+            Poker = new(this, Translation.Poker, Translation.PokerShort, "Poker", 40, 45, "5");
+            Grande = new(this, Translation.Grande, Translation.GrandeShort, "Grande", 50, 80, "30");
 
 
             Values.Add(Nine);

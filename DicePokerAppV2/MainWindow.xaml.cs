@@ -58,7 +58,7 @@ namespace DicePokerAppV2
                     if (temp > maxPlayer)
                     {
                         numberOfPlayers = maxPlayer.ToString();
-                        MessageBox.Show($"Maximal {maxPlayer} players allowed.");
+                        MessageBox.Show($"Max. {maxPlayer} {Translation.PlayersAllowed}.");
                     }
                     else
                         numberOfPlayers = value;
@@ -83,7 +83,7 @@ namespace DicePokerAppV2
                     if (temp > maxColums)
                     {
                         numberOfColumns = maxColums.ToString();
-                        MessageBox.Show($"Maximal {maxColums} columns allowed.");
+                        MessageBox.Show($"Max. {maxColums} {Translation.ColumnsAllowed}.");
                     }
                     else
                         numberOfColumns = value;
@@ -108,7 +108,7 @@ namespace DicePokerAppV2
         {
             InitializeComponent();
 
-            Title = "Dice-Poker-App";
+            Title = Translation.MainTitle;
 
             DataContext = this;
 
@@ -179,10 +179,10 @@ namespace DicePokerAppV2
             InputPanel.HorizontalAlignment = HorizontalAlignment.Center;
             InputPanel.VerticalAlignment = VerticalAlignment.Center;
 
-            var playersInput = CreateInputField("Players #", inputTextBoxes, true, nameof(NumberOfPlayers));
+            var playersInput = CreateInputField($"{Translation.Players} #", inputTextBoxes, true, nameof(NumberOfPlayers));
             InputPanel.Children.Add(playersInput);
 
-            var columnInput = CreateInputField("Columns #", inputTextBoxes, true, nameof(NumberOfColumns));
+            var columnInput = CreateInputField($"{Translation.Columns} #", inputTextBoxes, true, nameof(NumberOfColumns));
             InputPanel.Children.Add(columnInput);
 
             InputPanel.CanVerticallyScroll = true;
@@ -199,19 +199,23 @@ namespace DicePokerAppV2
             //confirmPlayers.Click += ClickConfirmButton_CreatePlayerFields;
             //buttonPanel.Children.Add(confirmPlayers.SurroundingBorder);
 
-            var startButton = new PokerWindowButton("start");
+            var startButton = new PokerWindowButton(Translation.NewGame);
             startButton.Click += StartButton_Click;
             startButton.Command = EnableStartButton;
             startButton.CommandParameter = AllTextboxesForStart;
             buttonPanel.Children.Add(startButton.SurroundingBorder);
 
-            var LoadAutoSaveButton = new PokerWindowButton("load auto save");
+            var LoadAutoSaveButton = new PokerWindowButton(Translation.LoadAutoSave);
             LoadAutoSaveButton.Click += LoadAutoSaveButton_Click; ;
             buttonPanel.Children.Add(LoadAutoSaveButton.SurroundingBorder);
 
-            var OpenPokerFileButton = new PokerWindowButton("open poker file");
+            var OpenPokerFileButton = new PokerWindowButton(Translation.LoadGame);
             OpenPokerFileButton.Click += OpenPokerFileButton_Click;
             buttonPanel.Children.Add(OpenPokerFileButton.SurroundingBorder);
+
+            var ChangeLanguageButton = new PokerWindowButton(Translation.ChangeLanguage);
+            ChangeLanguageButton.Click += ChangeLanguageButton_Click;
+            buttonPanel.Children.Add(ChangeLanguageButton.SurroundingBorder);
 
             Grid.SetColumn(buttonPanel, 0);
             Grid.SetRow(buttonPanel, 0);
@@ -230,6 +234,21 @@ namespace DicePokerAppV2
 
             grid.Margin = new Thickness(10);
             return grid;
+        }
+
+        private void ChangeLanguageButton_Click(object sender, RoutedEventArgs e)
+        {
+            Translation.CurrentLanguage++;
+
+            if((int)Translation.CurrentLanguage >= Enum.GetValues(typeof(Translator.Language)).Length)
+            {
+                Translation.CurrentLanguage = 0;
+            }
+
+            MainWindow newWindow = new MainWindow();
+            Application.Current.MainWindow = newWindow;
+            newWindow.Show();
+            this.Close();
         }
 
         private void OpenPokerFileButton_Click(object sender, RoutedEventArgs e)
@@ -281,11 +300,11 @@ namespace DicePokerAppV2
             //MessageBox.Show(PokerLoader.DebugState.ToString());
             if (Logger.ReplaceLogWithTempLog())
             {
-                MessageBox.Show("Loading failed, Logfile was rebuild.");
+                MessageBox.Show(Translation.LoadingFailedRebuild);
             }
             else
             {
-                MessageBox.Show("Loading failed.");
+                MessageBox.Show(Translation.LoadingFailed);
             }           
         }
 
@@ -316,7 +335,7 @@ namespace DicePokerAppV2
                                 Logger.ResetLog();
                                 resetLog = false;
                             }
-                            Players.Add(new Player(idCount++, string.IsNullOrWhiteSpace(tb.Text.Trim()) ? (numColumns == 1 ? $"P{idCount - 1}" : $"Player {idCount - 1}") : tb.Text.Trim(), numColumns));
+                            Players.Add(new Player(idCount++, string.IsNullOrWhiteSpace(tb.Text.Trim()) ? (numColumns == 1 ? $"{Translation.PlayerShort}{idCount - 1}" : $"{Translation.Player} {idCount - 1}") : tb.Text.Trim(), numColumns));
                         //}                          
                     }
                 }
@@ -343,7 +362,7 @@ namespace DicePokerAppV2
 
             for (int i = 0; i < tempNumberOfPlayers; i++)
             {
-                var tempGrid = CreateInputField($"Player {i + 1}:", playersTextBoxes, false, $"player{i + 1}");
+                var tempGrid = CreateInputField($"{Translation.Player} {i + 1}:", playersTextBoxes, false, $"player{i + 1}");
                 PlayersGrids.Add(tempGrid);
                 InputPanel.Children.Add(tempGrid);
             }   
@@ -425,16 +444,16 @@ namespace DicePokerAppV2
                         if(15 < tb.Text.Length)
                         {
                             tb.Text = tb.Text.Substring(0, 15);
-                            MessageBox.Show("Maximal 15 characters allowed.");
+                            MessageBox.Show($"Max. {15} {Translation.MaxCharacters}.");
                             tb.CaretIndex = tb.Text.Length;
                         }
                     }
-                    else
-                    {
-                        tb.Text = string.Empty;
+                    //else
+                    //{
+                    //    //tb.Text = string.Empty;
 
-                        MessageBox.Show("At first, please ente a valid number of colums.");
-                    }
+                    //    //MessageBox.Show(Translation.FirstEnterNumberOfColumns);
+                    //}
                 }
             }
         }

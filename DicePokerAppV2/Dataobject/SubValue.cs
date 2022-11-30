@@ -19,8 +19,8 @@ namespace DicePokerAppV2.Dataobject
 
         public override int MaxRealisticScore => IsThrown ? GetScore() : DefaultValue;
 
-        public SubValue(PokerColumn owner, string name, string shortname, int defalutValue, int servedValue, params string[] valitationValues) 
-            : base(owner, name, shortname, defalutValue)
+        public SubValue(PokerColumn owner, string name, string shortname, string logName, int defalutValue, int servedValue, params string[] valitationValues) 
+            : base(owner, name, shortname, logName, defalutValue)
         {
             ServedValue = servedValue;
             ServedValitationValues = valitationValues;
@@ -62,7 +62,7 @@ namespace DicePokerAppV2.Dataobject
                     return incomingValue;
             }
 
-            OnValitationFaild($"{incomingValue} is no valide value for {Name}");
+            OnValitationFaild($"{incomingValue} {Translation.IsNotValideFor} \"{Name}\"");
           
             return string.Empty;
         }

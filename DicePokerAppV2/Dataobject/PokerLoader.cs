@@ -70,7 +70,7 @@ namespace DicePokerAppV2.Dataobject
                         return false;
 
                     DebugState = 3;
-                    var value = column.Values.FirstOrDefault(x => x.Name == valueData[4]);
+                    var value = column.Values.FirstOrDefault(x => x.LogName == valueData[4]);
 
                     if (value == null)
                         return false;

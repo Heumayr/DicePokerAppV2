@@ -9,7 +9,7 @@ namespace DicePokerAppV2.Dataobject
 { 
     public sealed class AboveValue : Value
     {
-        public AboveValue(PokerColumn owner, string name, string shortname, int defalutValue) : base(owner, name, shortname, defalutValue)
+        public AboveValue(PokerColumn owner, string name, string shortname, string logName, int defalutValue) : base(owner, name, shortname, logName, defalutValue)
         {
             for(int i = 1; i <= defalutValue * 5; i++)
             {
@@ -67,7 +67,7 @@ namespace DicePokerAppV2.Dataobject
             if (failure)
             {
                 //throw new PokerValueException($"{incomingValue} is no proper Value.");
-                OnValitationFaild($"{incomingValue} is no valide value for {Name}");
+                OnValitationFaild($"{incomingValue} {Translation.IsNotValideFor} \"{Name}\"");
                 return string.Empty;
             }
 

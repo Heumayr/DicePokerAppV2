@@ -53,12 +53,22 @@ namespace DicePokerAppV2.Controls
         {
             var numOfCol = Owner.NumberOfPokerColumns;
 
-            if (numOfCol == 1 && Owner.Name.Length > 4)
-                Owner.Name = $"{Owner.Name.Substring(0, 4)}.";
-            else if (numOfCol == 2 && Owner.Name.Length > 12)
-                Owner.Name = $"{Owner.Name.Substring(0, 12)}.";
 
-            Children.Add(new PlayerLabel(Owner, nameof(Owner.Name), PokerWindow.NormalFontSize, true, 0, 0));
+            if(Owner is Player pl)
+            {
+                if (numOfCol == 1 && pl.DisplayName.Length > 4)
+                    pl.DisplayName = $"{pl.DisplayName.Substring(0, 4)}.";
+                else if (numOfCol == 2 && Owner.Name.Length > 12)
+                    pl.DisplayName = $"{pl.DisplayName.Substring(0, 12)}.";
+
+                Children.Add(new PlayerLabel(Owner, nameof(pl.DisplayName), PokerWindow.NormalFontSize, true, 0, 0));
+            }
+            else
+            {
+                Children.Add(new PlayerLabel(Owner, nameof(Owner.Name), PokerWindow.NormalFontSize, true, 0, 0));
+            }
+
+            
             Children.Add(new PokerBorder(0));
         }
 

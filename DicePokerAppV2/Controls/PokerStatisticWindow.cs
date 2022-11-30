@@ -32,7 +32,7 @@ namespace DicePokerAppV2.Controls
         {
             CallingPokerWindow = pokerWindow;
             Players = players;
-            Title = "Congratulations!";
+            Title = Translation.StatisticTitle;
             IsClosed = false;
 
             MaxHeight = System.Windows.SystemParameters.VirtualScreenHeight;
@@ -97,9 +97,9 @@ namespace DicePokerAppV2.Controls
 
             StatisticGrid.RowDefinitions.Add(new RowDefinition() { Name = "Headers" });
 
-            var firstLabel = CreateHeadersLabels("First");
+            var firstLabel = CreateHeadersLabels(Translation.First);
             Grid.SetColumn(firstLabel, 1);
-            var lastLabel = CreateHeadersLabels("Last");
+            var lastLabel = CreateHeadersLabels(Translation.Last);
             Grid.SetColumn(lastLabel, 2);
 
             StatisticGrid.Children.Add(firstLabel);
@@ -109,7 +109,7 @@ namespace DicePokerAppV2.Controls
             {
                 StatisticGrid.RowDefinitions.Add(new RowDefinition() { Name = $"Column_{i + 1}" });
 
-                var tempLabel = CreateHeadersLabels($"Column {i + 1}");
+                var tempLabel = CreateHeadersLabels($"{Translation.Column} {i + 1}");
                 Grid.SetRow(tempLabel, i + 1);
                 StatisticGrid.Children.Add(tempLabel);
             }
@@ -185,15 +185,15 @@ namespace DicePokerAppV2.Controls
 
         private void CreateButtons()
         {
-            var saveButton = new PokerWindowButton("save");
+            var saveButton = new PokerWindowButton(Translation.Save);
             saveButton.Click += SaveButton_Click;
             ButtonPanel.Children.Add(saveButton.SurroundingBorder);
 
-            var backButton = new PokerWindowButton("back to game");
+            var backButton = new PokerWindowButton(Translation.BackToGame);
             backButton.Click += BackButton_Click;
             ButtonPanel.Children.Add(backButton.SurroundingBorder);
 
-            var closeButton = new PokerWindowButton("close");
+            var closeButton = new PokerWindowButton(Translation.Close);
             closeButton.Click += CloseButton_Click; 
             ButtonPanel.Children.Add(closeButton.SurroundingBorder);
         }

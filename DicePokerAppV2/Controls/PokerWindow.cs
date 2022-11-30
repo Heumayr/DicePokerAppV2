@@ -146,15 +146,15 @@ namespace DicePokerAppV2.Controls
         {
             var panel = new StackPanel();
 
-            var buttonSave = new PokerWindowButton("save");
+            var buttonSave = new PokerWindowButton(Translation.Save);
             buttonSave.Click += ButtonSave_Click;
             panel.Children.Add(buttonSave.SurroundingBorder);
 
-            var buttonHideStatistics = new PokerWindowButton("hide stats");
+            var buttonHideStatistics = new PokerWindowButton(Translation.HideStats);
             buttonHideStatistics.Click += ButtonHideStatistics_Click;
             panel.Children.Add(buttonHideStatistics.SurroundingBorder);
 
-            var buttonCancel = new PokerWindowButton("back to menu");
+            var buttonCancel = new PokerWindowButton(Translation.BackToMenu);
             buttonCancel.Click += ButtonCancel_Click;
             panel.Children.Add(buttonCancel.SurroundingBorder);
 
@@ -174,11 +174,11 @@ namespace DicePokerAppV2.Controls
                 SetUpStatsState();
 
                 if (countClicksVis == 1)
-                    button.Content = "show min stats";
+                    button.Content = Translation.MinStats;
                 else if (countClicksVis == 2)
-                    button.Content = "hide stats";
+                    button.Content = Translation.HideStats;
                 else
-                    button.Content = "unhide stats";
+                    button.Content = Translation.ShowStats;
                 
             }
         }
@@ -541,7 +541,7 @@ namespace DicePokerAppV2.Controls
 
             tempColumnPanel.Children.Add(new PokerBorder(0));
             var tempLabel2 = new PokerValueLabel(NormalFontSize, true, 0, 0);
-            tempLabel2.Content = "Sum";
+            tempLabel2.Content = Translation.Sum;
             tempColumnPanel.Children.Add(tempLabel2);
 
             //Statistics
@@ -557,21 +557,21 @@ namespace DicePokerAppV2.Controls
         {
             panel.Children.Add(new PokerBorder(0));
             
-            StatisticLabels.Add(GeneratePokerValueLabelStatisitics("dtm"));
-            StatisticLabels.Add(GeneratePokerValueLabelStatisitics("place"));
+            StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.Dtm));
+            StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.Place));
 
-            StatisticLabels.Add(GeneratePokerValueLabelStatisitics("p. open"));
-            StatisticLabels.Add(GeneratePokerValueLabelStatisitics("r. open"));
+            StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.PossibleOpen));
+            StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.RealisticOpen));
 
-            StatisticLabels.Add(GeneratePokerValueLabelStatisitics("p. max"));            
-            StatisticLabels.Add(GeneratePokerValueLabelStatisitics("r. max"));
+            StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.Possible));            
+            StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.Realistic));
             
        
-            StatisticLabels.Add(GeneratePokerValueLabelStatisitics("max. o."));
-            StatisticLabels.Add(GeneratePokerValueLabelStatisitics("min. o."));
+            StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.MaxOpponent));
+            StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.MinOpponent));
 
-            StatisticLabels.Add(GeneratePokerValueLabelStatisitics("o. val."));
-            StatisticLabels.Add(GeneratePokerValueLabelStatisitics("throws"));
+            StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.ThrowsOpen));
+            StatisticLabels.Add(GeneratePokerValueLabelStatisitics(Translation.Throws));
 
             StatisticLabels.ForEach(p => panel.Children.Add(p));
         }

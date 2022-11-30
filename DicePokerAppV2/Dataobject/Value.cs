@@ -14,6 +14,9 @@ namespace DicePokerAppV2.Dataobject
 
         public string Name { get; init; }
         public string ShortName { get; init; }
+
+        public string LogName { get; init; }
+
         public int DefaultValue { get; init; }
         public bool IsThrown => ShowenValue != string.Empty;
         public PokerColumn OwnerColumn { get; set; }
@@ -36,9 +39,10 @@ namespace DicePokerAppV2.Dataobject
         public abstract int MaxPossibleScore { get; }
         public abstract int MaxRealisticScore { get; }
 
-        public Value(PokerColumn owner, string name, string shortname, int defalutValue) : base()
+        public Value(PokerColumn owner, string name, string shortname, string logName, int defalutValue) : base()
         {
             Name = name;
+            LogName = logName;
             DefaultValue = defalutValue;
             ShortName = shortname;
             OwnerColumn = owner;
@@ -72,7 +76,7 @@ namespace DicePokerAppV2.Dataobject
         public static readonly string LogNameString = "value";
         public string GetLogString()
         {
-            return $"{LogNameString};{OwnerColumn.Player.Id};{OwnerColumn.Player.Name};{OwnerColumn.ColumnNumber};{Name};{ShowenValue}";
+            return $"{LogNameString};{OwnerColumn.Player.Id};{OwnerColumn.Player.Name};{OwnerColumn.ColumnNumber};{LogName};{ShowenValue}";
         }
     }
 }
