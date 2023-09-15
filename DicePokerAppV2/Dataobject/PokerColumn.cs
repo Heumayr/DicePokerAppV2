@@ -228,6 +228,7 @@ namespace DicePokerAppV2.Dataobject
             Values.Add(Poker);
             Values.Add(Grande);
         }
+
         private PlacementEnumeration GetPlacement()
         {
             if (Score > CurrentMaxOpponentScore)
@@ -262,6 +263,42 @@ namespace DicePokerAppV2.Dataobject
         protected void OnPlacemantChanged()
         {
             PlacementChanged?.Invoke(this, PokerPlacement);
+        }
+
+        public decimal GetFinalPoints()
+        {
+            var placaement = GetPlacement();
+
+            switch (placaement)
+            {
+                case PlacementEnumeration.First:
+                    return ColumnNumber;
+
+                case PlacementEnumeration.FirstShared:
+
+                    var countOp = OpponentsColumns.Where(c => c.GetPlacement() == PlacementEnumeration.FirstShared).Count() + 1;
+
+                    var result = (decimal)ColumnNumber / countOp;
+
+                    return result;
+ 
+                case PlacementEnumeration.Middle:
+                    return default;
+     
+                case PlacementEnumeration.LastShared:
+                    var countOpl = OpponentsColumns.Where(c => c.GetPlacement() == PlacementEnumeration.LastShared).Count() + 1;
+
+                    var resultl = (decimal)ColumnNumber / countOpl;
+
+                    return resultl * -1;
+
+                case PlacementEnumeration.Last:
+                    return ColumnNumber * -1;
+
+                default:
+                    break;
+            }
+            return default;
         }
     }
 }

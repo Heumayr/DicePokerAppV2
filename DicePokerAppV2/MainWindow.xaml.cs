@@ -361,6 +361,7 @@ namespace DicePokerAppV2
 
             if (Players.Count > 0 && numColumns > 0)
             {    
+                Players.First().IsCurrent = true;
                 _ = new PokerWindow(this, Players, numColumns);
             }
         }

@@ -26,6 +26,9 @@ namespace DicePokerAppV2.Controls
         public List<StackPanel> StatisticGridContent { get; init; } = new();
 
         public Grid StatisticGrid { get; init; } = new();
+
+        public StackPanel Placing { get; init; } = new();
+
         public bool ButtonCallBackToGame { get => buttonCallBackToGame; set => buttonCallBackToGame = value; }
 
         public PokerStatisticWindow(PokerWindow pokerWindow, List<Player> players)
@@ -45,9 +48,12 @@ namespace DicePokerAppV2.Controls
 
             CreateButtons();
             SetUpStatisticGrid();
+            SetUpPlacingStackPanel();
 
             StatisticPanel.Children.Add(StatisticGrid);
             StatisticPanel.Margin = new Thickness(2, 4, 2, 2);
+
+            StatisticPanel.Children.Add(Placing);
 
             MainPanel.Children.Add(ButtonPanel);
             MainPanel.Children.Add(StatisticPanel);
@@ -71,6 +77,33 @@ namespace DicePokerAppV2.Controls
             Show();
 
             ScaleWindow();
+        }
+
+        private void SetUpPlacingStackPanel()
+        {
+            var orderedPlayers = Players.OrderByDescending(p => p.FinalPoints);
+
+            var count = 1;
+            var oldPoints = orderedPlayers.First().FinalPoints;
+
+            Placing.Orientation = Orientation.Vertical;
+
+            Placing.Children.Add(CreateHeadersLabels(Translation.Rankings));
+
+            foreach (var player in orderedPlayers)
+            {
+                if(player != orderedPlayers.First())
+                {
+                    if (player.FinalPoints != oldPoints)
+                        count++;
+
+                    oldPoints = player.FinalPoints;
+                }
+
+                var tempLabel = CreateContentLabels($"{count}. {player.Name} - {Translation.Points}: {Math.Round(player.FinalPoints, 2)}");
+
+                Placing.Children.Add(tempLabel);
+            }
         }
 
         private int countSizeChangeInit = 0;
@@ -155,6 +188,9 @@ namespace DicePokerAppV2.Controls
                 StatisticGrid.Children.Add(CreateStatisticContent(i, 1, PlacementEnumeration.First, PlacementEnumeration.FirstShared));
                 StatisticGrid.Children.Add(CreateStatisticContent(i, 2, PlacementEnumeration.Last, PlacementEnumeration.LastShared));
             }
+
+            Placing.Children.Clear();
+            SetUpPlacingStackPanel();
         }
 
         private StackPanel CreateStatisticContent(int columnNumber, int statisticGridColumn, params PlacementEnumeration[] placements)

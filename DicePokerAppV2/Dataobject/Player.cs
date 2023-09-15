@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DicePokerAppV2.Dataobject
@@ -12,6 +13,7 @@ namespace DicePokerAppV2.Dataobject
     {
         private int numberOfThrowsShown;
         private bool isFinished;
+        private bool isCurrent = false;
 
         public string Name { get; init; }
 
@@ -19,7 +21,21 @@ namespace DicePokerAppV2.Dataobject
 
         public int Id { get; init; }
 
+        public bool IsCurrent
+        {
+            get { return isCurrent; }
+            set
+            {
+                if(IsCurrent != value) 
+                    OnPropertyChanged(nameof(IsCurrent));
+
+                isCurrent = value;
+            }
+        }
+
         public List<PokerColumn> PokerColumns { get; set; } = new();
+
+        public decimal FinalPoints => PokerColumns.Sum(c => c.GetFinalPoints());
 
         public int NumberOfPokerColumns { get; init; }
 
@@ -41,14 +57,15 @@ namespace DicePokerAppV2.Dataobject
             {
                 numberOfThrowsShown = value;
                 OnPropertyChanged(nameof(NumberOfThrowsShown));
-                OnThrowsValitationHappend();
 
-                OnIsDoneChanged();
+                OnThrowsValitationHappend();
 
                 foreach (var op in opponents)
                 {
                     op.OnThrowsValitationHappend();
                 }
+
+                OnIsDoneChanged();
             }
         }
 
@@ -64,20 +81,20 @@ namespace DicePokerAppV2.Dataobject
             if (opponents.Count < 1)
                 return true;
 
-            if (opponents.Count == 1)
-            {
-                var control = NumberOfThrows - opponents[0].NumberOfThrows;
+            //if (opponents.Count == 1)
+            //{
+            //    var control = NumberOfThrows - opponents[0].NumberOfThrows;
 
-                if (Id == 2)
-                {
-                    control *= -1;
-                }
+            //    if (Id == 2)
+            //    {
+            //        control *= -1;
+            //    }
 
-                if (control < 0 || control > 1)
-                    return false;
+            //    if (control < 0 || control > 1)
+            //        return false;
 
-                return true;
-            }
+            //    return true;
+            //}
 
             Player? playerInFront = null;
             Player? playerBehinde = null;
@@ -103,6 +120,14 @@ namespace DicePokerAppV2.Dataobject
 
             if (behinde > 1 || behinde < 0 || inFront > 1 || inFront < 0)
                 return false;
+
+            //Opacity
+            if (Id == 1 && opponents.All(o => o.NumberOfThrows == NumberOfThrows))
+                IsCurrent = true;
+            else if (playerBehinde.NumberOfThrows > NumberOfThrows)
+                IsCurrent = true;
+            else
+                IsCurrent = false;
 
             return true;
         }
@@ -144,6 +169,20 @@ namespace DicePokerAppV2.Dataobject
             foreach (var pokerColumn in PokerColumns)
             {
                 pokerColumn.SetOpponentsColumns(opponents);
+            }
+        }
+
+        public void HandoverFocus()
+        {
+            if (IsCurrent && opponents.Any())
+            {
+                var next = opponents.FirstOrDefault(o => o.Id == Id + 1);
+
+                if(next == null)
+                    next = opponents.First(o => o.Id == 1);
+
+                next.IsCurrent = true;
+                IsCurrent = false;
             }
         }
 

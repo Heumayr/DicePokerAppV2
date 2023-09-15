@@ -97,5 +97,9 @@ namespace DicePokerAppV2.Translator
         public static string FirstEnterNumberOfColumns => CurrentLanguage == Language.Deutsch ? "Bitte zuerst die Spaltenanzahl eingeben." : "At first, please ente a valid number of colums.";
 
         public static string ChangeLanguage => CurrentLanguage == Language.Deutsch ? "Sprache ändern" : "change language";
+
+        public static string Points => CurrentLanguage == Language.Deutsch ? "Punkte" : "Points";
+
+        public static string Rankings => CurrentLanguage == Language.Deutsch ? "Punktestand" : "Ranking";
     }
 }

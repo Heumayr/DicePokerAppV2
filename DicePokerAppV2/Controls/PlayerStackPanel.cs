@@ -24,13 +24,19 @@ namespace DicePokerAppV2.Controls
             VerticalAlignment = VerticalAlignment.Center;
             //Margin = new Thickness(5, 0, 5, 0);
 
-            AddPlayerLabelsBefore();            
+            AddPlayerLabelsBefore();
 
             CreateColumns();
 
             AddPlayerLabelsAfter();
 
             Owner.ThrowsValitation += ChangeColorOnThrowValitation;
+
+            if (Owner.IsCurrent)
+
+                OpacityMask = new SolidColorBrush(Colors.White);
+            else
+                OpacityMask = new SolidColorBrush(Colors.Black) { Opacity = 0.3 };
         }
 
         private void ChangeColorOnThrowValitation(object? sender, bool e)
@@ -39,6 +45,14 @@ namespace DicePokerAppV2.Controls
                 Background = PokerWindow.MainBackgroundColor;
             else
                 Background = Brushes.IndianRed;
+
+            if (e && Owner.IsCurrent)
+                OpacityMask = new SolidColorBrush(Colors.White);
+            else
+                OpacityMask = new SolidColorBrush(Colors.Black) { Opacity = 0.3 };
+
+            if (!e)
+                OpacityMask = new SolidColorBrush(Colors.White);
         }
 
         private void AddPlayerLabelsAfter()
@@ -54,7 +68,7 @@ namespace DicePokerAppV2.Controls
             var numOfCol = Owner.NumberOfPokerColumns;
 
 
-            if(Owner is Player pl)
+            if (Owner is Player pl)
             {
                 if (numOfCol == 1 && pl.DisplayName.Length > 4)
                     pl.DisplayName = $"{pl.DisplayName.Substring(0, 4)}.";
@@ -68,7 +82,7 @@ namespace DicePokerAppV2.Controls
                 Children.Add(new PlayerLabel(Owner, nameof(Owner.Name), PokerWindow.NormalFontSize, true, 0, 0));
             }
 
-            
+
             Children.Add(new PokerBorder(0));
         }
 
@@ -125,7 +139,7 @@ namespace DicePokerAppV2.Controls
 
                 var statlabel5 = new PokerColumnLabel(column, nameof(column.MaxRealisticScoreShown), PokerWindow.SmallFontSize, false, 0, 0);
                 StatisticLabels.Add(statlabel5);
-                tempColumnPanel.Children.Add(statlabel5);               
+                tempColumnPanel.Children.Add(statlabel5);
 
                 var statlabel1 = new PokerColumnLabel(column, nameof(column.CurrentMaxOpponentScoreShown), PokerWindow.SmallFontSize, false, 0, 0);
                 StatisticLabels.Add(statlabel1);
@@ -142,7 +156,7 @@ namespace DicePokerAppV2.Controls
 
 
                 column.PlacementChanged += CheckColorOfPacement;
-                
+
                 ColumnsPanel.Children.Add(tempColumnPanel);
                 column.UpdateData();
             }
@@ -151,17 +165,17 @@ namespace DicePokerAppV2.Controls
 
         private void CheckColorOfPacement(object? sender, PlacementEnumeration e)
         {
-            if(sender is PokerColumn pc)
+            if (sender is PokerColumn pc)
             {
                 PokerColumnLabel? label = null;
 
                 foreach (var child in ColumnsPanel.Children)
                 {
-                    if(child is StackPanel column)
+                    if (child is StackPanel column)
                     {
                         foreach (var child2 in column.Children)
                         {
-                            if(child2 is PokerColumnLabel pcl)
+                            if (child2 is PokerColumnLabel pcl)
                             {
                                 if (pc.ColumnNumber == pcl.Owner.ColumnNumber &&
                                     pcl.BindingValue == nameof(pcl.Owner.PokerPlacementShown))
@@ -177,7 +191,7 @@ namespace DicePokerAppV2.Controls
                         break;
                 }
 
-                if(label != null)
+                if (label != null)
                 {
                     switch (e)
                     {
