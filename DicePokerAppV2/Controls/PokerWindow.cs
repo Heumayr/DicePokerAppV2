@@ -22,6 +22,10 @@ namespace DicePokerAppV2.Controls
         public static readonly int GlobalCornerRadius = 8;
         public static readonly Brush MainBackgroundColor = Brushes.Azure;
         public static readonly Brush MainFrontColor = Brushes.Turquoise;
+        public static readonly Brush OverlayColor = new SolidColorBrush(Color.FromRgb(220, 255, 255));
+        public static readonly Brush ErrorColor = Brushes.IndianRed;
+        public static readonly Brush LightErrorColor = new SolidColorBrush(Color.FromRgb(255, 230, 230));
+        public static readonly Brush HighlightColor = Brushes.White;
 
         private readonly int numberOfAllColums = 0;
         private bool controlPressed;

@@ -59,23 +59,23 @@ namespace DicePokerAppV2.Controls
                 {
                     if(isFocused)
                     {
-                        pvt.Background = Brushes.White;
+                        pvt.Background = PokerWindow.HighlightColor;
                     }
                     else
                     {
-                        pvt.Background = new SolidColorBrush(Color.FromRgb(220, 255, 255));
+                        pvt.Background = PokerWindow.OverlayColor;
                     }
 
                     if (!noError)
                     {
-                        pvt.Background = new SolidColorBrush(Color.FromRgb(255, 230, 230));
+                        pvt.Background = PokerWindow.LightErrorColor;
                     }
                 }
                 else if (item is PlayerLabel pl)
                 {
                     if(isFocused)
                     {
-                        pl.Background = Brushes.White;
+                        pl.Background = PokerWindow.HighlightColor;
                     }
                     else
                     {
@@ -84,14 +84,14 @@ namespace DicePokerAppV2.Controls
 
                     if (!noError)
                     {
-                        pl.Background = Brushes.IndianRed;
+                        pl.Background = PokerWindow.ErrorColor;
                     }
                 }
                 else if (item is PokerColumnLabel pcl)
                 {
                     if (isFocused)
                     {
-                        pcl.Background = Brushes.White;
+                        pcl.Background = PokerWindow.HighlightColor;
                     }
                     else
                     {
@@ -100,7 +100,7 @@ namespace DicePokerAppV2.Controls
 
                     if (!noError)
                     {
-                        pcl.Background = Brushes.IndianRed;
+                        pcl.Background = PokerWindow.ErrorColor;
                     }
                 }
 

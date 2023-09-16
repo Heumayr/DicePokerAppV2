@@ -12,7 +12,7 @@ namespace DicePokerAppV2.Dataobject
     public class Player : INotifyPropertyChanged, IComparable<Player>
     {
         private int numberOfThrowsShown;
-        private bool isFinished;
+        //private bool isFinished;
         private bool isCurrent = false;
 
         public string Name { get; init; }
