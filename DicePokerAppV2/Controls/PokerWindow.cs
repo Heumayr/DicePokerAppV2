@@ -26,6 +26,7 @@ namespace DicePokerAppV2.Controls
         public static readonly Brush ErrorColor = Brushes.IndianRed;
         public static readonly Brush LightErrorColor = new SolidColorBrush(Color.FromRgb(255, 230, 230));
         public static readonly Brush HighlightColor = Brushes.White;
+        public static readonly Brush HasValueColer = new SolidColorBrush(Color.FromRgb(240, 255, 255));
 
         private readonly int numberOfAllColums = 0;
         private bool controlPressed;

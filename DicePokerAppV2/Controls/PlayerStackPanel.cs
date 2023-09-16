@@ -59,7 +59,10 @@ namespace DicePokerAppV2.Controls
                 {
                     if(isFocused)
                     {
-                        pvt.Background = PokerWindow.HighlightColor;
+                        if (string.IsNullOrWhiteSpace(pvt.Text))
+                            pvt.Background = PokerWindow.HighlightColor;
+                        else
+                            pvt.Background = PokerWindow.HasValueColer;
                     }
                     else
                     {

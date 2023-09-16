@@ -104,6 +104,11 @@ namespace DicePokerAppV2
             AllTextboxesForStart.AddRange(playersTextBoxes);
         }
 
+        static MainWindow()
+        {
+            StaticLiterals.LoadSettings();
+        }
+
         public MainWindow()
         {
             InitializeComponent();
