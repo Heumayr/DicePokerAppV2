@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Printing;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -33,26 +34,76 @@ namespace DicePokerAppV2.Controls
             Owner.ThrowsValitation += ChangeColorOnThrowValitation;
 
             if (Owner.IsCurrent)
-
-                OpacityMask = new SolidColorBrush(Colors.White);
+            {
+                SetValueTextboxes(Children, true);
+                //Background = new SolidColorBrush(Color.FromRgb(220, 255, 255));
+            }
             else
-                OpacityMask = new SolidColorBrush(Colors.Black) { Opacity = 0.3 };
+            {
+                SetValueTextboxes(Children, false);
+                //Background = PokerWindow.MainBackgroundColor;
+            }
         }
 
         private void ChangeColorOnThrowValitation(object? sender, bool e)
         {
-            if (e)
+            if (e && Owner.IsCurrent)
+            {
+                SetValueTextboxes(Children, true);
+                //Background = new SolidColorBrush(Color.FromRgb(220, 255, 255));
+            }
+            else
+            {
+                SetValueTextboxes(Children, false);
+                //Background = PokerWindow.MainBackgroundColor;
+            }
+
+            if (!e)
+            {
+                SetValueTextboxes(Children, true);
+            }
+
+            if (e && Owner.IsCurrent)
+                Background = PokerWindow.MainBackgroundColor;
+            else if (e)
                 Background = PokerWindow.MainBackgroundColor;
             else
                 Background = Brushes.IndianRed;
+        }
 
-            if (e && Owner.IsCurrent)
-                OpacityMask = new SolidColorBrush(Colors.White);
-            else
-                OpacityMask = new SolidColorBrush(Colors.Black) { Opacity = 0.3 };
+        private void SetValueTextboxes(UIElementCollection children, bool isFocused)
+        {
+            foreach (var item in children)
+            {
+                if (item is PokerValueTextbox pvt)
+                {
+                    if (isFocused)
+                    {
+                        pvt.Background = Brushes.White;
+                    }
+                    else
+                    {
+                        pvt.Background = new SolidColorBrush(Color.FromRgb(220, 255, 255));
+                    }
+                }
 
-            if (!e)
-                OpacityMask = new SolidColorBrush(Colors.White);
+                if (item is PlayerLabel pcl)
+                {
+                    if (isFocused)
+                    {
+                        pcl.Background = new SolidColorBrush(Color.FromRgb(220, 255, 255));
+                    }
+                    else
+                    {
+                        pcl.Background = PokerWindow.MainBackgroundColor;
+                    }
+                }
+
+                if(item is StackPanel sp)
+                {
+                    SetValueTextboxes(sp.Children, isFocused);
+                }
+            }
         }
 
         private void AddPlayerLabelsAfter()

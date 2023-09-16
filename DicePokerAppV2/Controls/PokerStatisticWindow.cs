@@ -208,7 +208,7 @@ namespace DicePokerAppV2.Controls
 
                 if (placements.Contains(column.PokerPlacement))
                 {
-                    result.Children.Add(CreateContentLabels($"{player.Name}: {column.Score}"));
+                    result.Children.Add(CreateContentLabels($"{player.Name}: {column.Score} ({Math.Round(player.PokerColumns.First(c => c.ColumnNumber == columnNumber).GetFinalPoints(), 2)})"));
                 }
             }
 
