@@ -35,7 +35,7 @@ namespace DicePokerAppV2
         private double CurrentScale { get; set; } = 1.0;
 
         private List<TextBox> inputTextBoxes { get; set; } = new List<TextBox>();
-        private List<TextBox> playersTextBoxes { get; set; } = new List<TextBox>();
+        private List<TextBox> playersTextBoxes { get; set; } = new();
 
         private List<Grid> PlayersGrids { get; set; } = new();
 
@@ -195,7 +195,7 @@ namespace DicePokerAppV2
             grid.RowDefinitions.Add(row1);
 
             InputPanel.HorizontalAlignment = HorizontalAlignment.Center;
-            InputPanel.VerticalAlignment = VerticalAlignment.Center;
+            InputPanel.VerticalAlignment = VerticalAlignment.Top;
 
             var playersInput = CreateInputField($"{Translation.Players} #", inputTextBoxes, true, nameof(NumberOfPlayers));
             InputPanel.Children.Add(playersInput);
@@ -222,6 +222,10 @@ namespace DicePokerAppV2
             startButton.Command = EnableStartButton;
             startButton.CommandParameter = AllTextboxesForStart;
             buttonPanel.Children.Add(startButton.SurroundingBorder);
+
+            var rotateNamesButton = new PokerWindowButton(Translation.RotateNames);
+            rotateNamesButton.Click += RotateNamesButton_Click;
+            buttonPanel.Children.Add(rotateNamesButton.SurroundingBorder);
 
             var LoadAutoSaveButton = new PokerWindowButton(Translation.LoadAutoSave);
             LoadAutoSaveButton.Click += LoadAutoSaveButton_Click; ;
@@ -253,6 +257,102 @@ namespace DicePokerAppV2
             grid.Margin = new Thickness(10);
             return grid;
         }
+
+        private void RotateNamesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!playersTextBoxes.Any())
+                return;
+
+            var oldName = playersTextBoxes.Last().Text;
+
+            foreach (var item in playersTextBoxes)
+            {
+                var temp = item.Text;
+
+                item.Text = oldName;
+
+                oldName = temp;
+            }
+        }
+
+        int playerCountIndex = 0;
+        int coulumCountIndex = 0;
+
+        private void OnMouseWheel_PlayerInput(object sender, MouseWheelEventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                tb.Focus();
+
+                if(tb.Name == nameof(NumberOfPlayers))
+                {
+                    if (e.Delta < 0)
+                        playerCountIndex++;
+                    else
+                        playerCountIndex--;
+
+                    if (playerCountIndex < 1)
+                        playerCountIndex = 1;
+
+                    tb.Text = playerCountIndex.ToString();
+                }
+                else if (tb.Name == nameof(NumberOfColumns))
+                {
+                    if (e.Delta < 0)
+                        coulumCountIndex++;
+                    else
+                        coulumCountIndex--;
+
+                    if (coulumCountIndex < 1)
+                        coulumCountIndex = 1;
+
+                    tb.Text = coulumCountIndex.ToString();
+                } 
+                else if (tb.Name.StartsWith("player"))
+                {
+                    if(StaticLiterals.DefaultNames == null)
+                    {
+                        e.Handled = true;
+                        return;
+                    }
+
+                    var index = -1;
+                    
+                    for (int i = 0; i < StaticLiterals.DefaultNames.Length; i++)
+                    {
+                        if (StaticLiterals.DefaultNames[i] == tb.Text)
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    if (e.Delta < 0)
+                        index--;
+                    else
+                        index++;
+
+                    if (index < 0)
+                        index = StaticLiterals.DefaultNames.Length - 1;
+
+                    if (index >= StaticLiterals.DefaultNames.Length)
+                        index = 0;
+
+                    tb.Text = StaticLiterals.DefaultNames[index].ToString();
+
+                }
+            }
+
+            e.Handled = true;
+        }
+
+        //private void PokerValueTextbox_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        //{
+        //    if (ActualValue != BindingValue.ShowenValue && mouseChangedValue)
+        //        BindingValue.ShowenValue = ActualValue;
+
+        //    mouseChangedValue = false;
+        //}
 
         private void ChangeLanguageButton_Click(object sender, RoutedEventArgs e)
         {
@@ -379,6 +479,8 @@ namespace DicePokerAppV2
 
             int.TryParse(numberOfPlayers, out tempNumberOfPlayers);
 
+            playersTextBoxes.Clear();
+
             for (int i = 0; i < tempNumberOfPlayers; i++)
             {
                 var tempGrid = CreateInputField($"{Translation.Player} {i + 1}:", playersTextBoxes, false, $"player{i + 1}");
@@ -386,7 +488,6 @@ namespace DicePokerAppV2
                 InputPanel.Children.Add(tempGrid);
             }   
         }
-
 
         public Grid CreateInputField(string labelContent, List<TextBox> textBoxesList, bool bindIt, string propertyName)
         {
@@ -424,6 +525,8 @@ namespace DicePokerAppV2
             textBox.VerticalAlignment = VerticalAlignment.Center;
             textBox.HorizontalContentAlignment = HorizontalAlignment.Left;
             textBox.VerticalContentAlignment = VerticalAlignment.Center;
+
+            textBox.MouseWheel += OnMouseWheel_PlayerInput;
 
             if (bindIt)
             {

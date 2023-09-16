@@ -101,5 +101,7 @@ namespace DicePokerAppV2.Translator
         public static string Points => CurrentLanguage == Language.Deutsch ? "Punkte" : "Points";
 
         public static string Rankings => CurrentLanguage == Language.Deutsch ? "Punktestand" : "Ranking";
+
+        public static string RotateNames => CurrentLanguage == Language.Deutsch ? "Namen rotieren" : "Rotate names";
     }
 }
