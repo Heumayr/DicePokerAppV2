@@ -1,6 +1,7 @@
 ﻿using DicePokerAppV2.Dataobject;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Printing;
 using System.Text;
@@ -92,6 +93,9 @@ namespace DicePokerAppV2.Controls
                 }
                 else if (item is PokerColumnLabel pcl)
                 {
+                    if (pcl.Name == nameof(PokerColumn.PokerPlacementShown))
+                        return;
+
                     if (isFocused)
                     {
                         pcl.Background = PokerWindow.HighlightColor;

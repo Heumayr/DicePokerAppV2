@@ -17,6 +17,7 @@ namespace DicePokerAppV2.Controls
         {
             Owner = owner;
             BindingValue = bindingValue;
+            Name = bindingValue;
 
             MinWidth = minwidth;
             MinHeight = minheight;
