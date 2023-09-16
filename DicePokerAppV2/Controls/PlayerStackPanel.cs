@@ -34,50 +34,30 @@ namespace DicePokerAppV2.Controls
             Owner.ThrowsValitation += ChangeColorOnThrowValitation;
 
             if (Owner.IsCurrent)
-            {
-                SetValueTextboxes(Children, true);
-                //Background = new SolidColorBrush(Color.FromRgb(220, 255, 255));
-            }
+                SetValueTextboxes(Children, true, true);
             else
-            {
-                SetValueTextboxes(Children, false);
-                //Background = PokerWindow.MainBackgroundColor;
-            }
+                SetValueTextboxes(Children, false, true);
         }
 
         private void ChangeColorOnThrowValitation(object? sender, bool e)
         {
             if (e && Owner.IsCurrent)
-            {
-                SetValueTextboxes(Children, true);
-                //Background = new SolidColorBrush(Color.FromRgb(220, 255, 255));
-            }
+                SetValueTextboxes(Children, true, e);
             else
-            {
-                SetValueTextboxes(Children, false);
-                //Background = PokerWindow.MainBackgroundColor;
-            }
+
+                SetValueTextboxes(Children, false, e);
 
             if (!e)
-            {
-                SetValueTextboxes(Children, true);
-            }
-
-            if (e && Owner.IsCurrent)
-                Background = PokerWindow.MainBackgroundColor;
-            else if (e)
-                Background = PokerWindow.MainBackgroundColor;
-            else
-                Background = Brushes.IndianRed;
+                SetValueTextboxes(Children, true, e);   
         }
 
-        private void SetValueTextboxes(UIElementCollection children, bool isFocused)
+        private void SetValueTextboxes(UIElementCollection children, bool isFocused, bool noError)
         {
             foreach (var item in children)
             {
                 if (item is PokerValueTextbox pvt)
                 {
-                    if (isFocused)
+                    if(isFocused)
                     {
                         pvt.Background = Brushes.White;
                     }
@@ -85,16 +65,26 @@ namespace DicePokerAppV2.Controls
                     {
                         pvt.Background = new SolidColorBrush(Color.FromRgb(220, 255, 255));
                     }
+
+                    if (!noError)
+                    {
+                        pvt.Background = new SolidColorBrush(Color.FromRgb(255, 230, 230));
+                    }
                 }
                 else if (item is PlayerLabel pl)
                 {
-                    if (isFocused)
+                    if(isFocused)
                     {
                         pl.Background = Brushes.White;
                     }
                     else
                     {
                         pl.Background = PokerWindow.MainBackgroundColor;
+                    }
+
+                    if (!noError)
+                    {
+                        pl.Background = Brushes.IndianRed;
                     }
                 }
                 else if (item is PokerColumnLabel pcl)
@@ -107,11 +97,16 @@ namespace DicePokerAppV2.Controls
                     {
                         pcl.Background = PokerWindow.MainBackgroundColor;
                     }
+
+                    if (!noError)
+                    {
+                        pcl.Background = Brushes.IndianRed;
+                    }
                 }
 
                 if (item is StackPanel sp)
                 {
-                    SetValueTextboxes(sp.Children, isFocused);
+                    SetValueTextboxes(sp.Children, isFocused, noError);
                 }
             }
         }
