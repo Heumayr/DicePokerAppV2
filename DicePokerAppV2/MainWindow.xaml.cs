@@ -515,7 +515,6 @@ namespace DicePokerAppV2
             Grid.SetRow(label, 0);
             inputGrid.Children.Add(label);
 
-
             var textBox = new TextBox();
             textBox.Name = propertyName;
             textBox.MinHeight = 20;

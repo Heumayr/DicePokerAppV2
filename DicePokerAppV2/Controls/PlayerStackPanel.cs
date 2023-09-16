@@ -86,12 +86,22 @@ namespace DicePokerAppV2.Controls
                         pvt.Background = new SolidColorBrush(Color.FromRgb(220, 255, 255));
                     }
                 }
-
-                if (item is PlayerLabel pcl)
+                else if (item is PlayerLabel pl)
                 {
                     if (isFocused)
                     {
-                        pcl.Background = new SolidColorBrush(Color.FromRgb(220, 255, 255));
+                        pl.Background = Brushes.White;
+                    }
+                    else
+                    {
+                        pl.Background = PokerWindow.MainBackgroundColor;
+                    }
+                }
+                else if (item is PokerColumnLabel pcl)
+                {
+                    if (isFocused)
+                    {
+                        pcl.Background = Brushes.White;
                     }
                     else
                     {
@@ -99,7 +109,7 @@ namespace DicePokerAppV2.Controls
                     }
                 }
 
-                if(item is StackPanel sp)
+                if (item is StackPanel sp)
                 {
                     SetValueTextboxes(sp.Children, isFocused);
                 }
